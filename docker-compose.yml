@@ -1,0 +1,35 @@
+version: '3.4'
+
+networks:
+    stocklistingnetwork:
+        
+
+services:
+
+    stocklistingdb:
+            container_name: stocklistingdb
+            image: mcr.microsoft.com/mssql/server:2019-latest
+            ports:
+                - 8002:1433
+            environment:
+                - ACCEPT_EULA=Y
+                - MSSQL_SA_PASSWORD=Password123
+            networks:
+                - stocklistingnetwork
+        
+
+    stocklisting:
+        image: ${DOCKER_REGISTRY-}stocklisting
+        container_name: stocklistingapp
+        build:
+              context: .
+              dockerfile: Stocklisting/Dockerfile
+        ports:
+            - 8001:8001
+        depends_on:
+               - stocklistingdb
+        networks:
+               - stocklistingnetwork
+
+       
+       

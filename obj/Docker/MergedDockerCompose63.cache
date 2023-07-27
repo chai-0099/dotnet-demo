@@ -1,0 +1,47 @@
+name: dockercompose495712950853731654
+services:
+  stocklisting:
+    build:
+      context: D:\HCL W_2\Stocklisting
+      dockerfile: Stocklisting/Dockerfile
+    container_name: stocklistingapp
+    depends_on:
+      stocklistingdb:
+        condition: service_started
+    image: stocklisting
+    networks:
+      stocklistingnetwork: null
+    ports:
+    - mode: ingress
+      target: 80
+      published: "8001"
+      protocol: tcp
+  stocklistingdb:
+    container_name: stocklistingdb
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: Password123
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    networks:
+      stocklistingnetwork: null
+    ports:
+    - mode: ingress
+      target: 1433
+      published: "8002"
+      protocol: tcp
+  stockwebapp:
+    build:
+      context: D:\HCL W_2\Stocklisting
+      dockerfile: ../stockwatch/Dockerfile
+    container_name: stockwatchapp
+    image: stockwatch
+    networks:
+      stocklistingnetwork: null
+    ports:
+    - mode: ingress
+      target: 3000
+      published: "3000"
+      protocol: tcp
+networks:
+  stocklistingnetwork:
+    name: dockercompose495712950853731654_stocklistingnetwork
